@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash UI</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", sans-serif;
+  background: #f6f6f6;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  background: #fff;
+  height: 100vh;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+}
+
+.header .left {
+  font-size: 22px;
+}
+
+.header .center {
+  flex: 1;
+  text-align: center;
+}
+
+.center .amount {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.center .sub {
+  font-size: 13px;
+  color: #888;
+}
+
+.pay-btn {
+  background: #00d64f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* INPUT ROWS */
+.field {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid #eee;
+}
+
+.label {
+  width: 90px;
+  font-weight: 600;
+}
+
+.field input {
+  border: none;
+  flex: 1;
+  font-size: 16px;
+  outline: none;
+}
+
+.field input::placeholder {
+  color: #aaa;
+}
+
+/* SEND AS */
+.send-as {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.send-as button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 18px;
+  background: #efefef;
+  font-size: 14px;
+}
+
+.send-as .active {
+  background: #00d64f;
+  color: white;
+}
+
+/* SUGGESTED */
+.section-title {
+  font-size: 11px;
+  color: #999;
+  padding: 8px 16px;
+  letter-spacing: 1px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.item input {
+  margin-right: 10px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.info {
+  flex: 1;
+  font-size: 15px;
+}
+
+.info span {
+  display: block;
+  font-size: 13px;
+  color: #888;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e5e5e5;
+}
+
+/* RECEIPT SCREEN */
+#receiptScreen {
+  display: none;
+  max-width: 420px;
+  margin: auto;
+  height: 100vh;
+  background: #f3f3f3;
+  position: relative;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.checkmark {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #00d64f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin-top: 40px;
+}
+
+#receiptText {
+  margin-top: 40px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #222;
+}
+
+#doneBtn {
+  position: absolute;
+  bottom: 40px;
+  left: 30px;
+  right: 30px;
+  border: none;
+  background: #00d64f;
+  color: white;
+  height: 56px;
+  border-radius: 30px;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="left">✕</div>
+
+    <div class="center">
+      <div class="amount" id="amount">$4,000</div>
+      <div class="sub">Blockchain ▼</div>
+    </div>
+
+    <button class="pay-btn" id="payBtn">Pay</button>
+
+  </div>
+
+  <!-- TO -->
+  <div class="field">
+    <div class="label">To</div>
+    <input id="toInput" placeholder="Name, $Cashtag, Phone, Email">
+  </div>
+
+  <!-- FOR -->
+  <div class="field">
+    <div class="label">For</div>
+    <input placeholder="Add a note">
+  </div>
+
+  <!-- EMAIL -->
+  <div class="field">
+    <div class="label">Email</div>
+    <input type="email" placeholder="Enter email">
+  </div>
+
+  <!-- SEND AS -->
+  <div class="send-as">
+    <button class="active">Cash</button>
+    <button>Gift Card ▼</button>
+    <button>Stock ▼</button>
+  </div>
+
+  <!-- SUGGESTED -->
+  <div class="section-title">SUGGESTED</div>
+
+  <div id="list"></div>
+
+</div>
+
+<!-- RECEIPT SCREEN -->
+<div id="receiptScreen">
+
+  <div class="checkmark">✓</div>
+
+  <div id="receiptText"></div>
+
+  <button id="doneBtn">Done</button>
+
+</div>
+
+<script>
+const users = [
+  {name:"Kellen Bates", tag:"$Voidosu", color:"#ff2d55", letter:"K"},
+  {name:"Kate Howard", tag:"$LKhowz", color:"#8B5E3C", letter:"K"},
+  {name:"Julia Wilson", tag:"$wilson8823", color:"#5A31F4", letter:"J"},
+  {name:"Joshua Aguilar", tag:"$aguilarjoshua18", color:"#C76DDB", letter:"J"},
+  {name:"Haylee Walls", tag:"$HayleeWalls", color:"#88A83F", letter:"H"},
+  {name:"Cierra Shepard", tag:"$brutallyhonestcc", color:"#4A3B66", letter:"C"},
+  {name:"Camron Watkins", tag:"$kambam3118", color:"#1E4DB7", letter:"C"},
+  {name:"Alma Davis", tag:"$Ladyboss4ever", color:"#F4F44C", letter:"A"}
+];
+
+const list = document.getElementById("list");
+
+users.forEach((user, index) => {
+
+  const div = document.createElement("div");
+  div.className = "item";
+
+  div.innerHTML = `
+    <input type="checkbox">
+    
+    <div class="avatar" style="background:${user.color}">
+      ${user.letter}
+    </div>
+
+    <div class="info">
+      ${user.name}
+      <span>${user.tag}</span>
+    </div>
+
+    <div class="icon"></div>
+  `;
+
+  // CLICK USER TO AUTO FILL
+  div.addEventListener("click", () => {
+
+    selectedUser = user;
+
+    toInput.value = user.name;
+  });
+
+  list.appendChild(div);
+});
+
+// ELEMENTS
+const toInput = document.getElementById("toInput");
+const payBtn = document.getElementById("payBtn");
+const amountEl = document.getElementById("amount");
+
+const receiptScreen = document.getElementById("receiptScreen");
+const receiptText = document.getElementById("receiptText");
+const doneBtn = document.getElementById("doneBtn");
+
+let selectedUser = null;
+
+// FETCH NAME FROM CASHTAG
+toInput.addEventListener("input", () => {
+
+  const value = toInput.value.trim().toLowerCase();
+
+  if(value.startsWith("$")) {
+
+    const found = users.find(
+      user => user.tag.toLowerCase() === value
+    );
+
+    if(found) {
+
+      selectedUser = found;
+
+      // SHOW REAL NAME
+      toInput.value = found.name;
+
+      // OPTIONAL STORAGE
+      toInput.setAttribute("data-tag", found.tag);
+    }
+  }
+});
+
+// PAY BUTTON
+payBtn.addEventListener("click", () => {
+
+  const recipient = toInput.value.trim();
+
+  if(!recipient) {
+    alert("Please enter recipient");
+    return;
+  }
+
+  const amount = amountEl.innerText;
+
+  // HIDE MAIN APP
+  document.querySelector(".container").style.display = "none";
+
+  // SHOW RECEIPT
+  receiptScreen.style.display = "block";
+
+  receiptText.innerHTML = `
+    You sent ${amount}<br>
+    to ${recipient}
+  `;
+});
+
+// DONE BUTTON
+doneBtn.addEventListener("click", () => {
+
+  receiptScreen.style.display = "none";
+
+  document.querySelector(".container").style.display = "block";
+});
+</script>
+
+</body>
+</html>
