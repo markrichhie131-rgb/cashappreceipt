@@ -17,6 +17,7 @@ body {
   margin: auto;
   background: #fff;
   height: 100vh;
+  position: relative;
 }
 
 /* HEADER */
@@ -79,11 +80,33 @@ body {
   color: #aaa;
 }
 
+/* DYNAMIC LINK LOOKUP TOOL */
+#lookupLinkContainer {
+  padding: 0 16px 14px 106px;
+  font-size: 13px;
+  display: none;
+  background: #fff;
+}
+
+#externalLookupLink {
+  color: #00d64f;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#externalLookupLink:hover {
+  text-decoration: underline;
+}
+
 /* SEND AS */
 .send-as {
   display: flex;
   gap: 10px;
   padding: 14px 16px;
+  border-top: 1px solid #eee;
 }
 
 .send-as button {
@@ -148,6 +171,95 @@ body {
   background: #e5e5e5;
 }
 
+/* PIN SCREEN OVERLAY */
+#pinOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 10;
+  max-width: 420px;
+  margin: auto;
+  box-sizing: border-box;
+  padding: 40px 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.pin-sub {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.pin-dots {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  transition: background 0.1s ease;
+}
+
+.dot.filled {
+  background: #00d64f;
+  border-color: #00d64f;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.key {
+  height: 65px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.key:active {
+  background: #e0e0e0;
+}
+
+.key.action {
+  background: transparent;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.error-msg {
+  color: #ff2d55;
+  font-size: 14px;
+  margin-top: 15px;
+  height: 20px;
+  font-weight: 500;
+}
+
 /* RECEIPT SCREEN */
 #receiptScreen {
   display: none;
@@ -202,61 +314,80 @@ body {
 
 <div class="container">
 
-  <!-- HEADER -->
   <div class="header">
-
     <div class="left">✕</div>
-
     <div class="center">
       <div class="amount" id="amount">$4,000</div>
       <div class="sub">Blockchain ▼</div>
     </div>
-
     <button class="pay-btn" id="payBtn">Pay</button>
-
   </div>
 
-  <!-- TO -->
   <div class="field">
     <div class="label">To</div>
-    <input id="toInput" placeholder="Name, $Cashtag, Phone, Email">
+    <input id="toInput" placeholder="Name, $Cashtag, Phone, Email" autocomplete="off">
   </div>
 
-  <!-- FOR -->
+  <div id="lookupLinkContainer">
+    <a id="externalLookupLink" href="#" target="_blank">
+      Verify Profile ↗
+    </a>
+  </div>
+
   <div class="field">
     <div class="label">For</div>
     <input placeholder="Add a note">
   </div>
 
-  <!-- EMAIL -->
   <div class="field">
     <div class="label">Email</div>
     <input type="email" placeholder="Enter email">
   </div>
 
-  <!-- SEND AS -->
   <div class="send-as">
     <button class="active">Cash</button>
     <button>Gift Card ▼</button>
     <button>Stock ▼</button>
   </div>
 
-  <!-- SUGGESTED -->
   <div class="section-title">SUGGESTED</div>
-
   <div id="list"></div>
 
 </div>
 
-<!-- RECEIPT SCREEN -->
+<div id="pinOverlay">
+  <div class="pin-title">Enter Cash PIN</div>
+  <div class="pin-sub">Please verify your identity to proceed</div>
+  
+  <div class="pin-dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="keypad">
+    <div class="key" onclick="pressKey('1')">1</div>
+    <div class="key" onclick="pressKey('2')">2</div>
+    <div class="key" onclick="pressKey('3')">3</div>
+    <div class="key" onclick="pressKey('4')">4</div>
+    <div class="key" onclick="pressKey('5')">5</div>
+    <div class="key" onclick="pressKey('6')">6</div>
+    <div class="key" onclick="pressKey('7')">7</div>
+    <div class="key" onclick="pressKey('8')">8</div>
+    <div class="key" onclick="pressKey('9')">9</div>
+    <div class="key action" onclick="pressKey('Cancel')">Cancel</div>
+    <div class="key" onclick="pressKey('0')">0</div>
+    <div class="key action" onclick="pressKey('Delete')">⌫</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+</div>
+
 <div id="receiptScreen">
-
   <div class="checkmark">✓</div>
-
   <div id="receiptText"></div>
-
   <button id="doneBtn">Done</button>
-
 </div>
 
 <script>
@@ -271,43 +402,41 @@ const users = [
   {name:"Alma Davis", tag:"$Ladyboss4ever", color:"#F4F44C", letter:"A"}
 ];
 
+const CORRECT_PIN = "1234"; 
+let currentPinInput = "";
+
 const list = document.getElementById("list");
 
+// Render the suggested list items
 users.forEach((user, index) => {
-
   const div = document.createElement("div");
   div.className = "item";
-
   div.innerHTML = `
     <input type="checkbox">
-    
-    <div class="avatar" style="background:${user.color}">
-      ${user.letter}
-    </div>
-
-    <div class="info">
-      ${user.name}
-      <span>${user.tag}</span>
-    </div>
-
+    <div class="avatar" style="background:${user.color}">${user.letter}</div>
+    <div class="info">${user.name}<span>${user.tag}</span></div>
     <div class="icon"></div>
   `;
 
-  // CLICK USER TO AUTO FILL
   div.addEventListener("click", () => {
-
     selectedUser = user;
-
     toInput.value = user.name;
+    lookupContainer.style.display = "none"; // Hide link for suggested users
   });
-
   list.appendChild(div);
 });
 
-// ELEMENTS
+// DOM ELEMENTS
 const toInput = document.getElementById("toInput");
+const lookupContainer = document.getElementById("lookupLinkContainer");
+const externalLink = document.getElementById("externalLookupLink");
+
 const payBtn = document.getElementById("payBtn");
 const amountEl = document.getElementById("amount");
+
+const pinOverlay = document.getElementById("pinOverlay");
+const errorMsg = document.getElementById("errorMsg");
+const dots = document.querySelectorAll(".dot");
 
 const receiptScreen = document.getElementById("receiptScreen");
 const receiptText = document.getElementById("receiptText");
@@ -315,60 +444,104 @@ const doneBtn = document.getElementById("doneBtn");
 
 let selectedUser = null;
 
-// FETCH NAME FROM CASHTAG
+// INPUT LISTENER FOR THE DYNAMIC LINK GENERATION
 toInput.addEventListener("input", () => {
+  const value = toInput.value.trim();
 
-  const value = toInput.value.trim().toLowerCase();
-
-  if(value.startsWith("$")) {
-
-    const found = users.find(
-      user => user.tag.toLowerCase() === value
-    );
-
-    if(found) {
-
-      selectedUser = found;
-
-      // SHOW REAL NAME
-      toInput.value = found.name;
-
-      // OPTIONAL STORAGE
-      toInput.setAttribute("data-tag", found.tag);
-    }
+  // If input format starts with '$' and has more characters, update and show the link
+  if (value.startsWith("$") && value.length > 1) {
+    const cleanTag = value.replace("$", "");
+    
+    externalLink.href = `https://cash.app/$${cleanTag}`;
+    externalLink.innerText = `View live profile for ${value} ↗`;
+    
+    lookupContainer.style.display = "block";
+  } else {
+    // Hide lookup layout if they empty the input or type standard text names
+    lookupContainer.style.display = "none";
   }
 });
 
-// PAY BUTTON
+// PAY BUTTON CLICKED
 payBtn.addEventListener("click", () => {
-
   const recipient = toInput.value.trim();
-
   if(!recipient) {
     alert("Please enter recipient");
     return;
   }
+  openPinScreen();
+});
 
+// PIN LAYER SYSTEM ARCHITECTURE
+function openPinScreen() {
+  currentPinInput = "";
+  errorMsg.innerText = "";
+  updatePinDots();
+  pinOverlay.style.display = "flex";
+}
+
+function updatePinDots() {
+  dots.forEach((dot, index) => {
+    if (index < currentPinInput.length) {
+      dot.classList.add("filled");
+    } else {
+      dot.classList.remove("filled");
+    }
+  });
+}
+
+function pressKey(key) {
+  errorMsg.innerText = ""; 
+  
+  if (key === 'Cancel') {
+    pinOverlay.style.display = "none";
+    return;
+  }
+  
+  if (key === 'Delete') {
+    currentPinInput = currentPinInput.slice(0, -1);
+    updatePinDots();
+    return;
+  }
+
+  if (currentPinInput.length < 4) {
+    currentPinInput += key;
+    updatePinDots();
+  }
+
+  if (currentPinInput.length === 4) {
+    setTimeout(() => {
+      if (currentPinInput === CORRECT_PIN) {
+        processPayment();
+      } else {
+        errorMsg.innerText = "Incorrect PIN. Try again.";
+        currentPinInput = "";
+        updatePinDots();
+      }
+    }, 200);
+  }
+}
+
+function processPayment() {
+  const recipient = toInput.value.trim();
   const amount = amountEl.innerText;
 
-  // HIDE MAIN APP
+  pinOverlay.style.display = "none";
   document.querySelector(".container").style.display = "none";
 
-  // SHOW RECEIPT
   receiptScreen.style.display = "block";
-
   receiptText.innerHTML = `
     You sent ${amount}<br>
     to ${recipient}
   `;
-});
+}
 
 // DONE BUTTON
 doneBtn.addEventListener("click", () => {
-
   receiptScreen.style.display = "none";
-
   document.querySelector(".container").style.display = "block";
+  toInput.value = ""; 
+  lookupContainer.style.display = "none";
 });
 </script>
 
