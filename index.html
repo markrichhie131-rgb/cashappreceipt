@@ -48,6 +48,7 @@
             position: fixed;
             top: 0;
             left: 0;
+            transition: background-color 0.2s ease;
         }
 
         /* --- Serial Key Lock Screen Styles --- */
@@ -58,7 +59,7 @@
             width: 100vw;
             height: 100vh;
             background-color: #ffffff;
-            z-index: 1000;
+            z-index: 2000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -155,6 +156,7 @@
             box-shadow: none !important;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.2s ease;
         }
 
         /* --- Screen States --- */
@@ -168,7 +170,7 @@
             display: none;
             flex-direction: column;
             z-index: 10;
-            padding-bottom: 90px; /* Enhanced space for floating bottom nav */
+            padding-bottom: 130px; /* Safe clearing space for elevated floating navigation */
             padding-top: env(safe-area-inset-top, 20px);
         }
 
@@ -359,7 +361,7 @@
         .more-section, .activity-scroll-area {
             flex: 1;
             overflow-y: auto;
-            padding: 0 24px;
+            padding: 0 24px 30px 24px;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -438,28 +440,28 @@
             text-decoration: line-through;
         }
 
-        /* --- NEW FLOATING CAPSULE BOTTOM NAVIGATION --- */
+        /* --- FIXED CAPSULE BOTTOM NAVIGATION --- */
         .bottom-nav-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 0 24px calc(14px + env(safe-area-inset-bottom, 0px)) 24px;
-            z-index: 90;
-            pointer-events: none;
+            position: fixed;
+            bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 76%;
+            max-width: 380px;
+            z-index: 999;
             display: flex;
             justify-content: center;
+            pointer-events: none;
         }
 
         .bottom-nav {
             width: 100%;
-            max-width: 370px;
             height: 64px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 32px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.02);
+            border-radius: 999px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.03);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -469,8 +471,8 @@
         }
 
         .bottom-nav.green-nav {
-            background: rgba(0, 185, 40, 0.85);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            background: rgba(0, 195, 45, 0.85);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.15);
         }
 
         .nav-tab {
@@ -518,7 +520,7 @@
             width: 100%;
             height: 100%;
             background-color: var(--overlay-color);
-            z-index: 91;
+            z-index: 1001;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -540,7 +542,7 @@
             padding: 16px 24px calc(34px + env(safe-area-inset-bottom, 0px)) 24px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
             transition: bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 92;
+            z-index: 1002;
         }
 
         .bottom-sheet.active {
@@ -922,7 +924,7 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
-            z-index: 60;
+            z-index: 1060;
             display: none;
             justify-content: center;
             align-items: center;
@@ -1068,7 +1070,7 @@
 
     <input type="file" id="profile-image-uploader" accept="image/*" style="display: none;">
 
-    <div class="phone-container">
+    <div class="phone-container" id="main-phone-sandbox">
         
         <div id="screen-home" class="screen active">
             <div class="home-header">
@@ -1732,6 +1734,11 @@
             
             globalNavWrap.style.display = 'flex';
             globalNav.classList.remove('green-nav');
+            
+            // Revert parent wrapper environments back to default canvas coloring
+            document.documentElement.style.backgroundColor = "var(--bg-color)";
+            document.body.style.backgroundColor = "var(--bg-color)";
+            document.getElementById('main-phone-sandbox').style.backgroundColor = "var(--bg-color)";
 
             if (targetTab === 'home') {
                 tabHome.classList.add('active');
@@ -1740,6 +1747,12 @@
                 tabPay.classList.add('active');
                 screenPayCalc.classList.add('active');
                 globalNav.classList.add('green-nav');
+                
+                // Match the root document system colors seamlessly to full-bleed green
+                document.documentElement.style.backgroundColor = "var(--cash-green)";
+                document.body.style.backgroundColor = "var(--cash-green)";
+                document.getElementById('main-phone-sandbox').style.backgroundColor = "var(--cash-green)";
+                
                 resetGreenCalculator();
             } else if (targetTab === 'clock') {
                 tabClock.classList.add('active');
@@ -2090,15 +2103,15 @@
         }
 
         function renderSuccessReceipt(finalAmount, flowType) {
-            let cleanDisplayAmount = finalAmount.toLocaleString('en-US', {
-                minimumFractionDigits: finalAmount % 1 === 0 ? 0 : 2,
-                maximumFractionDigits: 2
-            });
-
             globalNavWrap.style.display = 'none'; 
 
             let rawDate = new Date();
             let timeString = rawDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            let cleanDisplayAmount = finalAmount.toLocaleString('en-US', {
+                minimumFractionDigits: finalAmount % 1 === 0 ? 0 : 2,
+                maximumFractionDigits: 2
+            });
 
             if (flowType === 'add') {
                 successMessageText.innerText = `You added $${cleanDisplayAmount} to your Cash App`;
