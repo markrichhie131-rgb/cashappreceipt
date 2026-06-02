@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cash App</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,20 +11,20 @@
     <meta name="theme-color" content="#00d632">
     
     <link rel="apple-touch-icon" href="image.png">
-<link rel="icon" type="image/png" href="image.png">
+    <link rel="icon" type="image/png" href="image.png">
 
     <style>
         /* --- Root & Global Styles --- */
         :root {
-            --bg-color: #f7f7f7; /* Matching light gray background from reference screenshots */
+            --bg-color: #f7f7f7; 
             --text-color: #000000;
             --text-muted: #666666;
-            --btn-light: #ffffff; /* Action buttons are white on light gray bg */
+            --btn-light: #ffffff; 
             --btn-disabled: #e2e2e2;
             --overlay-color: rgba(0, 0, 0, 0.4);
             --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --cash-green: #00d632; /* Classic Cash App vibrant green */
-            --purple-theme: #7A00FF; /* Vibrant purple for the Taxes icon */
+            --cash-green: #00d632; 
+            --purple-theme: #7A00FF; 
         }
 
         * {
@@ -33,25 +33,30 @@
             padding: 0;
             font-family: var(--font-stack);
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: var(--bg-color);
+            overflow: hidden !important;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
 
         /* --- Serial Key Lock Screen Styles --- */
         #serial-lock-screen {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background-color: #ffffff;
             z-index: 1000;
             display: flex;
@@ -59,6 +64,7 @@
             justify-content: center;
             align-items: center;
             padding: 40px 24px;
+            touch-action: none;
         }
 
         .lock-logo-box {
@@ -102,6 +108,8 @@
             text-align: center;
             font-weight: 600;
             transition: border-color 0.2s;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .lock-input:focus {
@@ -135,16 +143,16 @@
             transition: opacity 0.2s;
         }
 
-        /* Mobile Device Sandbox Wrapper */
+        /* Mobile Device Fullscreen Sandbox Wrapper */
         .phone-container {
-            width: 100%;
-            max-width: 420px;
-            height: 100%;
-            max-height: 900px;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            max-height: none !important;
             background-color: var(--bg-color);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            box-shadow: none !important;
             display: flex;
             flex-direction: column;
         }
@@ -160,7 +168,8 @@
             display: none;
             flex-direction: column;
             z-index: 10;
-            padding-bottom: 65px; /* Space for bottom nav */
+            padding-bottom: 90px; /* Enhanced space for floating bottom nav */
+            padding-top: env(safe-area-inset-top, 20px);
         }
 
         .screen.active {
@@ -180,7 +189,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px 10px 24px;
+            padding: 24px 24px 10px 24px;
         }
 
         .home-header h1, .activity-header h1 {
@@ -228,9 +237,21 @@
             z-index: 5;
         }
 
-        /* Balance Section */
+        /* Balance Section - Repositioned Wider & Lower */
         .balance-container {
-            padding: 20px 24px 25px 24px;
+            padding: 45px 24px 35px 24px; /* Significantly increased spacing layout */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            width: 100%;
+        }
+
+        .balance-row-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
         .balance-label {
@@ -241,20 +262,32 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            margin-bottom: 4px;
+        }
+
+        .balance-eye-btn {
+            padding: 6px;
+            cursor: pointer;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .balance-amount {
-            font-size: 48px; /* FIXED: Reduced size slightly closer to authentic screenshot */
-            font-weight: 600; /* FIXED: Kept at structural 600 layout rule weight */
+            font-size: 52px; 
+            font-weight: 600; 
             letter-spacing: -1px;
+            margin-top: 10px;
+            min-height: 62px;
+            display: flex;
+            align-items: center;
         }
 
-        /* Primary Action Buttons */
+        /* Primary Action Buttons - Sit Lower */
         .main-actions {
             display: flex;
             gap: 12px;
-            padding: 0 24px 20px 24px;
+            padding: 5px 24px 30px 24px;
         }
 
         .btn-action {
@@ -327,6 +360,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 0 24px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .more-title, .activity-section-title {
@@ -404,38 +438,76 @@
             text-decoration: line-through;
         }
 
-        /* Sticky Bottom Navigation */
-        .bottom-nav {
+        /* --- NEW FLOATING CAPSULE BOTTOM NAVIGATION --- */
+        .bottom-nav-container {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
-            background-color: #ffffff;
-            border-top: 1px solid #eeeeee;
+            padding: 0 24px calc(14px + env(safe-area-inset-bottom, 0px)) 24px;
+            z-index: 90;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        .bottom-nav {
+            width: 100%;
+            max-width: 370px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.02);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 40;
+            pointer-events: auto;
+            padding: 0 8px;
+            transition: background 0.2s, box-shadow 0.2s;
         }
 
         .bottom-nav.green-nav {
-            background-color: var(--cash-green);
-            border-top: 1px solid rgba(0,0,0,0.05);
+            background: rgba(0, 185, 40, 0.85);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
 
         .nav-tab {
+            flex: 1;
+            height: 100%;
             color: var(--text-color);
             cursor: pointer;
-            opacity: 0.4;
-            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
-        .nav-tab.active {
-            opacity: 1;
+        .nav-tab-pill {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 64px;
+            height: 42px;
+            border-radius: 21px;
+            transition: background-color 0.2s;
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Active styling defaults for light pages */
+        .nav-tab.active .nav-tab-pill {
+            background-color: rgba(0, 0, 0, 0.06);
+            color: rgba(0, 0, 0, 1);
+        }
+
+        /* Active styling inside the Green Page */
+        .bottom-nav.green-nav .nav-tab-pill {
+            color: rgba(0, 0, 0, 0.45);
+        }
+        .bottom-nav.green-nav .nav-tab.active .nav-tab-pill {
+            background-color: rgba(0, 0, 0, 0.15);
+            color: rgba(0, 0, 0, 0.9);
         }
 
         /* --- SHEET: ADD MONEY (BOTTOM SHEET) --- */
@@ -446,7 +518,7 @@
             width: 100%;
             height: 100%;
             background-color: var(--overlay-color);
-            z-index: 41;
+            z-index: 91;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -465,10 +537,10 @@
             background-color: #ffffff;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            padding: 16px 24px 34px 24px;
+            padding: 16px 24px calc(34px + env(safe-area-inset-bottom, 0px)) 24px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
             transition: bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 42;
+            z-index: 92;
         }
 
         .bottom-sheet.active {
@@ -554,6 +626,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 20px 24px;
+            padding-top: env(safe-area-inset-top, 20px);
         }
 
         .close-btn {
@@ -589,7 +662,7 @@
 
         /* Custom Keypad Layout */
         .keypad-container {
-            padding: 0 24px 34px 24px;
+            padding: 0 24px calc(34px + env(safe-area-inset-bottom, 0px)) 24px;
         }
 
         .grid-keypad {
@@ -632,7 +705,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px 10px 24px;
+            padding: 24px 24px 10px 24px;
             color: var(--text-color);
         }
 
@@ -669,6 +742,7 @@
             background-color: #ffffff;
             overflow-y: auto;
             z-index: 52;
+            -webkit-overflow-scrolling: touch;
         }
 
         .details-header {
@@ -676,6 +750,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 16px 24px;
+            padding-top: env(safe-area-inset-top, 20px);
             border-bottom: 1px solid #f4f4f4;
             background-color: #ffffff;
             position: sticky;
@@ -718,7 +793,6 @@
             font-size: 15px;
         }
 
-        /* Cashtag Link Module Row Style Extension */
         .cashtag-preview-row {
             display: none;
             padding: 8px 0 8px 55px;
@@ -749,6 +823,8 @@
             outline: none;
             font-size: 15px;
             color: var(--text-color);
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .input-element::placeholder {
@@ -757,6 +833,7 @@
 
         .contacts-wrapper {
             padding: 24px;
+            padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
         }
 
         .contacts-title {
@@ -768,6 +845,7 @@
         .contact-list {
             max-height: 400px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .contact-row {
@@ -879,7 +957,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 90px 24px 40px 24px;
+            padding: calc(90px + env(safe-area-inset-top, 20px)) 24px 40px 24px;
             align-items: flex-start;
             position: relative;
             background-color: #ffffff;
@@ -895,7 +973,7 @@
             height: 64px;
             background-color: #000000;
             border-radius: 50%;
-            display: flex; /* FIXED: Perfect geometric absolute alignment */
+            display: flex; 
             align-items: center;
             justify-content: center;
             color: #ffffff;
@@ -903,8 +981,8 @@
 
         .success-message {
             text-align: left;
-            font-size: 28px; /* FIXED: Set matching structural receipt scale metrics */
-            font-weight: 600; /* FIXED: Preserved clear 600 weight styling rule alignment */
+            font-size: 28px; 
+            font-weight: 600; 
             line-height: 1.25;
             max-width: 100%;
             color: #000000;
@@ -914,7 +992,7 @@
 
         .btn-done-green {
             position: absolute;
-            bottom: 40px;
+            bottom: calc(40px + env(safe-area-inset-bottom, 0px));
             left: 24px;
             right: 24px;
             background-color: #000000;
@@ -1009,11 +1087,21 @@
             </div>
 
             <div class="balance-container">
-                <div class="balance-label">
-                    <span>Cash balance</span>
-                    <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;">
-                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                    </svg>
+                <div class="balance-row-wrapper">
+                    <div class="balance-label">
+                        <span>Cash balance</span>
+                        <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <div id="balance-toggle-eye" class="balance-eye-btn">
+                        <svg id="eye-icon-open" class="icon" viewBox="0 0 24 24" style="width:22px; height:22px;">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                        <svg id="eye-icon-closed" class="icon" viewBox="0 0 24 24" style="width:22px; height:22px; display:none;">
+                            <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.82l2.92 2.92c1.51-1.39 2.59-3.21 3.14-5.24-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                        </svg>
+                    </div>
                 </div>
                 <div id="display-cash-balance" class="balance-amount">$0.00</div>
             </div>
@@ -1463,21 +1551,34 @@
             </div>
         </div>
 
-        <div class="bottom-nav" id="global-bottom-nav">
-            <div class="nav-tab active" id="tab-home">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            </div>
-            <div class="nav-tab" id="tab-pay">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        <div class="bottom-nav-container" id="global-bottom-nav-wrap">
+            <div class="bottom-nav" id="global-bottom-nav">
+                <div class="nav-tab active" id="tab-home">
+                    <div class="nav-tab-pill">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    </div>
                 </div>
-            <div class="nav-tab" id="tab-clock">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                <div class="nav-tab" id="tab-pay">
+                    <div class="nav-tab-pill">
+                        <svg class="icon" viewBox="0 0 24 24" style="width:26px; height:26px;"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    </div>
+                </div>
+                <div class="nav-tab" id="tab-clock">
+                    <div class="nav-tab-pill">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
+        // --- Prevent standard web zooming actions on mobile viewports ---
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
         // --- Serial Access Key Lock Validation Pipeline ---
         (function evaluateSystemSecurityState() {
             const lockState = localStorage.getItem('kemdev_unlocked_session');
@@ -1516,12 +1617,14 @@
         let currentBalance = 0.00;
         let selectedAmount = 0;
         let manualInputString = ""; 
+        let isBalanceHidden = false;
         
         // --- Green Payment Screen States Tracking ---
         let greenPayInputString = ""; 
         let isPaymentFlow = true; 
 
         // --- View Elements Cache ---
+        const globalNavWrap = document.getElementById('global-bottom-nav-wrap');
         const globalNav = document.getElementById('global-bottom-nav');
         const tabHome = document.getElementById('tab-home');
         const tabPay = document.getElementById('tab-pay');
@@ -1530,6 +1633,10 @@
         const screenHome = document.getElementById('screen-home');
         const screenActivity = document.getElementById('screen-activity');
         const displayCashBalance = document.getElementById('display-cash-balance');
+        const balanceToggleEye = document.getElementById('balance-toggle-eye');
+        const eyeIconOpen = document.getElementById('eye-icon-open');
+        const eyeIconClosed = document.getElementById('eye-icon-closed');
+
         const openAddMoneySheetBtn = document.getElementById('open-add-money-sheet');
         const sheetOverlay = document.getElementById('sheet-overlay');
         const addMoneySheet = document.getElementById('add-money-sheet');
@@ -1567,7 +1674,7 @@
         const profileUploaderHook = document.getElementById('profile-image-uploader');
         const profileTriggerButtons = document.querySelectorAll('.profile-trigger-target');
 
-        // --- NEW STATIC/MOCK DATA TRANSACTION ARRAYS ---
+        // --- DATA TRANSACTION ARRAYS ---
         let sampleTransactions = [
             { id: 1, section: 'today', name: 'Adiva Ratu', note: 'Dinner 🍕', date: '9:42 PM', status: 'Completed', amount: -42.50, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60', isImage: true },
             { id: 2, section: 'today', name: 'Blockchain', note: 'Add money', date: '4:15 PM', status: 'Completed', amount: 150.00, avatar: '⛓️', isImage: false },
@@ -1623,7 +1730,7 @@
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             
-            globalNav.style.display = 'flex';
+            globalNavWrap.style.display = 'flex';
             globalNav.classList.remove('green-nav');
 
             if (targetTab === 'home') {
@@ -1654,7 +1761,6 @@
             olderContainer.innerHTML = '';
 
             sampleTransactions.forEach(tx => {
-                // FIXED: Integrated standard logic parameters to enforce comma breaks on long number digits
                 let rawAbsAmount = Math.abs(tx.amount);
                 let formattedValueStr = rawAbsAmount.toLocaleString('en-US', {
                     minimumFractionDigits: rawAbsAmount % 1 === 0 ? 0 : 2,
@@ -1719,14 +1825,29 @@
             return parseFloat(clean) || 0;
         }
 
-        // --- UPDATE BALANCE HELPER ---
+        // --- UPDATE BALANCE HELPER WITH SHOW/HIDE TOGGLE FEATURE ---
         function updateBalanceUIRenderers() {
-            let formatted = currentBalance.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            displayCashBalance.innerText = `$${formatted}`;
+            if (isBalanceHidden) {
+                displayCashBalance.innerText = "●●●●";
+                eyeIconOpen.style.display = "none";
+                eyeIconClosed.style.display = "block";
+            } else {
+                let formatted = currentBalance.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                displayCashBalance.innerText = `$${formatted}`;
+                eyeIconOpen.style.display = "block";
+                eyeIconClosed.style.display = "none";
+            }
         }
+
+        // --- Balance Eye Action Toggle Listener ---
+        balanceToggleEye.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isBalanceHidden = !isBalanceHidden;
+            updateBalanceUIRenderers();
+        });
 
         // --- ADD MONEY BOTTOM SHEET FLOW ---
         function openBottomSheet() {
@@ -1772,13 +1893,13 @@
             manualAmountDisplay.innerText = "$0";
             manualContinueBtn.classList.remove('ready');
             
-            globalNav.style.display = 'none'; 
+            globalNavWrap.style.display = 'none'; 
             screenManual.classList.add('active');
         });
 
         closeManualBtn.addEventListener('click', () => {
             screenManual.classList.remove('active');
-            globalNav.style.display = 'flex'; 
+            globalNavWrap.style.display = 'flex'; 
         });
 
         keypadButtons.forEach(button => {
@@ -1912,7 +2033,6 @@
             const val = payToInput.value.trim();
             const lowerVal = val.toLowerCase();
             
-            // --- Live Cashtag External Link Engine Update ---
             const cashtagCard = document.getElementById('cashtag-link-card');
             const cashtagAnchor = document.getElementById('cashtag-anchor-tag');
             
@@ -1961,7 +2081,7 @@
         // --- ASYNC NETWORK SPINNER PROCESSING PIPELINE ---
         function executeLoadingSequence(targetAmount, flowType) {
             screenLoading.classList.add('active');
-            globalNav.style.display = 'none'; 
+            globalNavWrap.style.display = 'none'; 
 
             setTimeout(() => {
                 screenLoading.classList.remove('active');
@@ -1975,9 +2095,8 @@
                 maximumFractionDigits: 2
             });
 
-            globalNav.style.display = 'none'; 
+            globalNavWrap.style.display = 'none'; 
 
-            // Create fresh transaction logger records
             let rawDate = new Date();
             let timeString = rawDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
@@ -1986,7 +2105,6 @@
                 successDoneBtn.onclick = function() {
                     currentBalance += finalAmount;
                     
-                    // Prepend new record to historical ledger sequence
                     sampleTransactions.unshift({
                         id: Date.now(),
                         section: 'today',
